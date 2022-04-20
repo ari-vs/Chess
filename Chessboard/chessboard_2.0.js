@@ -177,19 +177,13 @@ function onCellClick(event, row, col) {
   console.log(col);
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
-      table.rows[i].cells[j].classList.remove('selected');
+      table.rows[i].cells[j].classList.remove('selected', 'movement');
     }
   }
 
   for (let piece of pieces) {
     if (piece.row === row && piece.col === col) {
       console.log(piece);
-      if (possibleMoves !== undefined) {
-        for (let possibleMove of possibleMoves) {
-          if (possibleMoves !== undefined)
-            table.rows[possibleMove[0]].cells[possibleMove[1]].classList.remove('movement');
-        }
-      }
       possibleMoves = piece.getPossibleMoves();
       if (selectedCell !== undefined) {
         selectedCell.classList.remove('selected');
