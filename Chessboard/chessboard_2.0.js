@@ -12,7 +12,8 @@ const QUEEN = 'queen';
 let selectedCell;
 let pieces = [];
 let table;
-let moveCell;
+let possibleMove;
+let possibleMoves;
 
 class Piece {
   constructor(row, col, type, player) {
@@ -61,74 +62,74 @@ class Piece {
   }
 
   getPawnRelativeMoves() {
-    if (this.player=='white')
-    return [[1, 0]];
-    else if (this.player=='black')
-    return[[-1,0]]
+    if (this.player == 'white')
+      return [[1, 0]];
+    else if (this.player == 'black')
+      return [[-1, 0]]
   }
 
-  getRookRelativeMoves(){
-    let result=[];
-          for (let i = 1; i < 8; i++) {
-              result.push([i, 0]);
-              result.push([-i, 0]);
-              result.push([0, i]);
-              result.push([0, -i]);
-          }
-          return result;
+  getRookRelativeMoves() {
+    let result = [];
+    for (let i = 1; i < 8; i++) {
+      result.push([i, 0]);
+      result.push([-i, 0]);
+      result.push([0, i]);
+      result.push([0, -i]);
+    }
+    return result;
   }
 
   getKnightRelativeMoves() {
-      let result=[];
-      result.push([2,1]);
-      result.push([2,-1]);
-      result.push([1,2]);
-      result.push([-1,2]);
-      result.push([-2,1]);
-      result.push([-2,-1]);
-      result.push([1,-2]);
-      result.push([-1,-2]);
-      return result;
+    let result = [];
+    result.push([2, 1]);
+    result.push([2, -1]);
+    result.push([1, 2]);
+    result.push([-1, 2]);
+    result.push([-2, 1]);
+    result.push([-2, -1]);
+    result.push([1, -2]);
+    result.push([-1, -2]);
+    return result;
   }
 
   getKingRelativeMoves() {
-    let result=[];
-    result.push([0,-1]);
-    result.push([0,1]);
-    result.push([1,0]);
-    result.push([-1,0]);
-    result.push([1,1]);
-    result.push([-1,-1]);
-    result.push([1,-1]);
-    result.push([-1,1]);
+    let result = [];
+    result.push([0, -1]);
+    result.push([0, 1]);
+    result.push([1, 0]);
+    result.push([-1, 0]);
+    result.push([1, 1]);
+    result.push([-1, -1]);
+    result.push([1, -1]);
+    result.push([-1, 1]);
     return result;
   }
 
   getBishopRelativeMoves() {
-    let result=[];
-    for(let i=1;i<8;i++){
-      result.push([i,i]);
-      result.push([i,-i]);
-      result.push([-i,-i]);
-      result.push([-i,i]);
+    let result = [];
+    for (let i = 1; i < 8; i++) {
+      result.push([i, i]);
+      result.push([i, -i]);
+      result.push([-i, -i]);
+      result.push([-i, i]);
+    }
+    return result;
   }
-  return result;
- }
 
- getQueenRelativeMoves() {
-  let result=[];
-  for(let i=1;i<8;i++){
-    result.push([i,i]);
-    result.push([i,-i]);
-    result.push([-i,-i]);
-    result.push([-i,i]);
-    result.push([i, 0]);
-    result.push([-i, 0]);
-    result.push([0, i]);
-    result.push([0, -i]);
+  getQueenRelativeMoves() {
+    let result = [];
+    for (let i = 1; i < 8; i++) {
+      result.push([i, i]);
+      result.push([i, -i]);
+      result.push([-i, -i]);
+      result.push([-i, i]);
+      result.push([i, 0]);
+      result.push([-i, 0]);
+      result.push([0, i]);
+      result.push([0, -i]);
+    }
+    return result;
   }
-return result;
- }
 }
 
 class BoardData {
@@ -183,12 +184,19 @@ function onCellClick(event, row, col) {
   for (let piece of pieces) {
     if (piece.row === row && piece.col === col) {
       console.log(piece);
-      let possibleMoves = piece.getPossibleMoves();
+      if (possibleMoves !== undefined) {
+        for (let possibleMove of possibleMoves) {
+          if (possibleMoves !== undefined)
+            table.rows[possibleMove[0]].cells[possibleMove[1]].classList.remove('movement');
+        }
+      }
+      possibleMoves = piece.getPossibleMoves();
       if (selectedCell !== undefined) {
         selectedCell.classList.remove('selected');
       }
-      for (let possibleMove of possibleMoves){
-      table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('selected');}
+      for (let possibleMove of possibleMoves) {
+        table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('movement');
+      }
     }
   }
 
