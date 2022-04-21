@@ -133,13 +133,27 @@ class Piece {
 }
 
 class BoardData {
-  constructor(pieces) {
+  constructor(pieces, row, col) {
     this.pieces = pieces;
+    this.row = row;
+    this.col = col;
   }
-
   // Returns piece in row, col, or undefined if not exists.
   getPiece(row, col) {
-
+    let getPieceCell = document.getElementById("cell-" + row + "_" + col);
+    for (let piece of pieces) {
+      if (piece.row === row && piece.col === col) {
+        if (piece.type == undefined) {
+          console.log("empty cell" + getPieceCell);
+        } else {
+          let result = [];
+          result.push(this.pieces);
+          result.push(this.row);
+          result.push(this.col);
+          return result;
+        }
+      }
+    }
   }
 }
 
@@ -150,7 +164,9 @@ function getInitialBoard() {
 
   for (let i = 0; i < BOARD_SIZE; i++) {
     result.push(new Piece(1, i, PAWN, WHITE_PLAYER));
+    result.push(new BoardData(PAWN, 1, i));
     result.push(new Piece(6, i, PAWN, BLACK_PLAYER));
+    result.push(new BoardData(PAWN, 6, i));
   }
   return result;
 }
@@ -166,10 +182,12 @@ function addPieces(result, row, player) {
   result.push(new Piece(row, 7, ROOK, player));
 }
 
-function addImage(cell, player, name) {
-  const image = document.createElement('img');
-  image.src = 'images/' + player + '/' + name + '.png';
-  cell.appendChild(image);
+function addImage(cell, player, name, piece) {
+  if (piece.type !== undefined) {
+    const image = document.createElement('img');
+    image.src = 'images/' + player + '/' + name + '.png';
+    cell.appendChild(image);
+  }
 }
 
 function onCellClick(event, row, col) {
@@ -184,7 +202,12 @@ function onCellClick(event, row, col) {
   for (let piece of pieces) {
     if (piece.row === row && piece.col === col) {
       console.log(piece);
-      possibleMoves = piece.getPossibleMoves();
+      if (piece.type !== undefined) {
+        possibleMoves = piece.getPossibleMoves();
+      }
+      if (piece.type == undefined) {
+        piece.getPiece(row, col);
+      }
       if (selectedCell !== undefined) {
         selectedCell.classList.remove('selected');
       }
@@ -220,7 +243,7 @@ function createChessBoard() {
   console.log('pieces', pieces);
 
   for (let piece of pieces) {
-    addImage(table.rows[piece.row].cells[piece.col], piece.player, piece.type);
+    addImage(table.rows[piece.row].cells[piece.col], piece.player, piece.type, piece);
   }
 }
 
