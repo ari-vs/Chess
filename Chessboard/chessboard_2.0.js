@@ -56,7 +56,13 @@ class Piece {
       const absoluteRow = absoluteMove[0];
       const absoluteCol = absoluteMove[1];
       if (absoluteRow >= 0 && absoluteRow <= 7 && absoluteCol >= 0 && absoluteCol <= 7) {
-        filteredMoves.push(absoluteMove);
+        if(dataBoard.checkCell(pieces, absoluteRow, absoluteCol)==undefined){
+          filteredMoves.push(absoluteMove);
+        }else if(this.player!==dataBoard.checkPlayer(pieces, absoluteRow, absoluteCol)){
+          filteredMoves.push(absoluteMove);
+        }else if (this.type!=="knight"){
+          break;
+        }
       }
     }
     console.log('filteredMoves', filteredMoves);
@@ -138,6 +144,7 @@ class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
   }
+
   getPiece(row, col) {
     let gPiece;
     for (let piece of this.pieces) {
@@ -146,18 +153,25 @@ class BoardData {
       }
     }
     if(gPiece == undefined){
-      console.log("it works");
       gPiece = "nothing";
     }
     return gPiece;
   }
+
   checkCell(pieces, row, col) {
     for (let piece of pieces) {
       if (piece.row == row && piece.col == col) {
         return piece;
       }
     }
-    return undefined;
+  }
+
+  checkPlayer(pieces, row, col) {
+    for (let piece of pieces) {
+      if (piece.row == row && piece.col == col) {
+        return piece.player;
+      }
+    }
   }
 }
 function getInitialBoard() {
