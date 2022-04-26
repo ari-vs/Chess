@@ -15,6 +15,7 @@ let dataBoard;
 let possibleMove;
 let possibleMoves;
 let currentPiece = [];
+let currentPlayer = 'white';
 
 class Piece {
   constructor(row, col, type, player) {
@@ -248,13 +249,24 @@ function addImage(cell, player, name) {
 }
 
 function onCellClick(event, row, col, table) {
+  console.log(currentPiece);
+  let cPieceRow = currentPiece[0];
+  let cPieceCol = currentPiece[1];
   console.log(row);
   console.log(col);
-  if (event.currentTarget.classList.contains("movement")) {
-    console.log(currentPiece);
-    cPieceRow = currentPiece[0];
-    cPieceCol = currentPiece[1];
-    moveCurrentPiece(cPieceRow, cPieceCol, row, col);
+  piecePlayer = dataBoard.getPiece(cPieceRow, cPieceCol).player
+  if ((currentPlayer == dataBoard.getPiece(row, col).player) || (currentPlayer == piecePlayer)) {
+    if (event.currentTarget.classList.contains("movement")) {
+      moveCurrentPiece(cPieceRow, cPieceCol, row, col);
+      if (currentPlayer === 'white'){
+        currentPlayer = 'black';
+      }else if(currentPlayer === 'black'){
+        currentPlayer = 'white';
+      }
+      console.log(currentPlayer);
+    }
+  }else{
+    console.log("this is "+currentPlayer+"'s turn!");
   }
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
@@ -301,7 +313,7 @@ function createChessBoard() {
 function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
   for (let piece of pieces) {
     if (piece.row === cPieceRow && piece.col === cPieceCol) {
-      if(piece.player!==dataBoard.checkPlayer(pieces, row, col) && dataBoard.checkPlayer(pieces, row, col) !== undefined){
+      if (piece.player !== dataBoard.checkPlayer(pieces, row, col) && dataBoard.checkPlayer(pieces, row, col) !== undefined) {
         let eatenPiece = dataBoard.getPiece(row, col);
         console.log(eatenPiece);
         indexOfEaten = pieces.indexOf(eatenPiece);
