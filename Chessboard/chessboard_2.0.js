@@ -18,174 +18,6 @@ let currentPiece = [];
 let currentPlayer = 'white';
 let winner;
 
-class Piece {
-  constructor(row, col, type, player) {
-    this.row = row;
-    this.col = col;
-    this.type = type;
-    this.player = player;
-  }
-  getPossibleMoves() {
-    let relativeMoves;
-    if (this.type === PAWN) {
-      relativeMoves = this.getPawnRelativeMoves();
-    } else if (this.type === ROOK) {
-      relativeMoves = this.getRookRelativeMoves();
-    } else if (this.type === KNIGHT) {
-      relativeMoves = this.getKnightRelativeMoves();
-    } else if (this.type === BISHOP) {
-      relativeMoves = this.getBishopRelativeMoves();
-    } else if (this.type === KING) {
-      relativeMoves = this.getKingRelativeMoves();
-    } else if (this.type === QUEEN) {
-      relativeMoves = this.getQueenRelativeMoves();
-    }
-    console.log('relativeMoves', relativeMoves);
-
-    let absoluteMoves = [];
-    for (let relativeMove of relativeMoves) {
-      const absoluteRow = this.row + relativeMove[0];
-      const absoluteCol = this.col + relativeMove[1];
-      absoluteMoves.push([absoluteRow, absoluteCol]);
-    }
-    console.log('absoluteMoves', absoluteMoves);
-
-    let filteredMoves = [];
-    for (let absoluteMove of absoluteMoves) {
-      const absoluteRow = absoluteMove[0];
-      const absoluteCol = absoluteMove[1];
-      if (absoluteRow >= 0 && absoluteRow <= 7 && absoluteCol >= 0 && absoluteCol <= 7) {
-        if (dataBoard.checkCell(pieces, absoluteRow, absoluteCol) == undefined) {
-          filteredMoves.push(absoluteMove);
-        } else if (this.player !== dataBoard.checkPlayer(pieces, absoluteRow, absoluteCol)) {
-          filteredMoves.push(absoluteMove);
-        }
-      }
-    }
-    console.log('filteredMoves', filteredMoves);
-    return filteredMoves;
-  }
-
-  getPawnRelativeMoves() {
-    let result = [];
-    if (this.player == 'white') {
-      if (dataBoard.checkCell(pieces, this.row + 1, this.col) == undefined) {
-        result.push([1, 0]);
-      }
-      if (this.player !== dataBoard.checkPlayer(pieces, this.row + 1, this.col + 1) && dataBoard.checkPlayer(pieces, this.row + 1, this.col + 1) !== undefined) {
-        result.push([1, 1]);
-      }
-      if (this.player !== dataBoard.checkPlayer(pieces, this.row + 1, this.col - 1) && dataBoard.checkPlayer(pieces, this.row + 1, this.col - 1) !== undefined) {
-        result.push([1, -1]);
-      }
-    } else if (this.player == 'black') {
-      if (dataBoard.checkCell(pieces, this.row - 1, this.col) == undefined) {
-        result.push([-1, 0]);
-      }
-      if (this.player !== dataBoard.checkPlayer(pieces, this.row - 1, this.col + 1) && dataBoard.checkPlayer(pieces, this.row - 1, this.col + 1) !== undefined) {
-        result.push([-1, 1]);
-      }
-      if (this.player !== dataBoard.checkPlayer(pieces, this.row - 1, this.col - 1) && dataBoard.checkPlayer(pieces, this.row - 1, this.col - 1) !== undefined) {
-        result.push([-1, - 1]);
-      }
-    }
-    return result;
-  }
-  getRookRelativeMoves() {
-    let result = [];
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row + i, this.col) !== undefined) {
-        result.push([i, 0]);
-        break;
-      }
-      result.push([i, 0]);
-    }
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row - i, this.col) !== undefined) {
-        result.push([-i, 0]);
-        break;
-      }
-      result.push([-i, 0]);
-    }
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row, this.col + i) !== undefined) {
-        result.push([0, i]);
-        break;
-      }
-      result.push([0, i]);
-    } for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row, this.col - i) !== undefined) {
-        result.push([0, -i]);
-        break;
-      }
-      result.push([0, -i]);
-    }
-    return result;
-  }
-
-  getKnightRelativeMoves() {
-    let result = [];
-    result.push([2, 1]);
-    result.push([2, -1]);
-    result.push([1, 2]);
-    result.push([-1, 2]);
-    result.push([-2, 1]);
-    result.push([-2, -1]);
-    result.push([1, -2]);
-    result.push([-1, -2]);
-    return result;
-  }
-
-  getKingRelativeMoves() {
-    let result = [];
-    result.push([0, -1]);
-    result.push([0, 1]);
-    result.push([1, 0]);
-    result.push([-1, 0]);
-    result.push([1, 1]);
-    result.push([-1, -1]);
-    result.push([1, -1]);
-    result.push([-1, 1]);
-    return result;
-  }
-
-  getBishopRelativeMoves() {
-    let result = [];
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row + i, this.col + i) !== undefined) {
-        result.push([i, i]);
-        break;
-      }
-      result.push([i, i]);
-    }
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row - i, this.col - i) !== undefined) {
-        result.push([-i, -i]);
-        break;
-      }
-      result.push([-i, -i]);
-    }
-    for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row + i, this.col - i) !== undefined) {
-        result.push([i, -i]);
-        break;
-      }
-      result.push([i, -i]);
-    } for (let i = 1; i < 8; i++) {
-      if (dataBoard.checkCell(pieces, this.row - i, this.col + i) !== undefined) {
-        result.push([-i, i]);
-        break;
-      }
-      result.push([-i, i]);
-    }
-    return result;
-  }
-
-  getQueenRelativeMoves() {
-    return this.getRookRelativeMoves().concat(this.getBishopRelativeMoves());
-  }
-}
-
 class BoardData {
   constructor(pieces) {
     this.pieces = pieces;
@@ -220,6 +52,7 @@ class BoardData {
     }
   }
 }
+
 function getInitialBoard() {
   let result = [];
   addPieces(result, 0, WHITE_PLAYER);
@@ -250,11 +83,8 @@ function addImage(cell, player, name) {
 }
 
 function onCellClick(event, row, col, table) {
-  console.log(currentPiece);
   let cPieceRow = currentPiece[0];
   let cPieceCol = currentPiece[1];
-  console.log(row);
-  console.log(col);
   piecePlayer = dataBoard.getPiece(cPieceRow, cPieceCol).player
   if ((currentPlayer == dataBoard.getPiece(row, col).player) || (currentPlayer == piecePlayer)) {
     if (event.currentTarget.classList.contains("movement")) {
@@ -264,10 +94,9 @@ function onCellClick(event, row, col, table) {
       }else if(currentPlayer === 'black'){
         currentPlayer = 'white';
       }
-      console.log(currentPlayer);
     }
   }else{
-    console.log("this is "+currentPlayer+"'s turn!");
+    alert("this is "+currentPlayer+"'s turn!");
   }
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
@@ -278,7 +107,7 @@ function onCellClick(event, row, col, table) {
   let movingPiece = dataBoard.getPiece(row, col);
   console.log('this cell is occupied by', movingPiece);
   for (let piece of pieces) {
-    if (piece.row === row && piece.col === col) {
+    if (piece.row === row && piece.col === col && (piece.row !== currentPiece[0] && piece.col !== currentPiece[1])) {
       possibleMoves = piece.getPossibleMoves();
       for (let possibleMove of possibleMoves) {
         table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('movement');
@@ -320,13 +149,10 @@ function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
     if (piece.row === cPieceRow && piece.col === cPieceCol) {
       if (piece.player !== dataBoard.checkPlayer(pieces, row, col) && dataBoard.checkPlayer(pieces, row, col) !== undefined) {
         let eatenPiece = dataBoard.getPiece(row, col);
-        console.log(eatenPiece.type);
         if(eatenPiece.type === KING){
           winner = currentPlayer;
         }
-        console.log(eatenPiece);
         indexOfEaten = pieces.indexOf(eatenPiece);
-        console.log(indexOfEaten);
         pieces.splice(indexOfEaten, 1);
         document.getElementById('cell-' + row + '_' + col).firstElementChild.remove();
       }
@@ -340,7 +166,5 @@ function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
 }
 
 pieces = getInitialBoard();
-console.log('pieces', pieces);
 dataBoard = new BoardData(pieces);
-console.log('BoardData', dataBoard);
 window.addEventListener('load', createChessBoard);
