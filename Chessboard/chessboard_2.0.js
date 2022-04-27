@@ -9,6 +9,8 @@ const BISHOP = 'bishop';
 const KING = 'king';
 const QUEEN = 'queen';
 
+let hasMoved = 0;
+let table;
 let selectedCell;
 let pieces = [];
 let dataBoard;
@@ -23,6 +25,7 @@ class BoardData {
     this.pieces = pieces;
   }
 
+  //returns BoardData of a given piece by row and col
   getPiece(row, col) {
     let gPiece;
     for (let piece of this.pieces) {
@@ -36,6 +39,7 @@ class BoardData {
     return gPiece;
   }
 
+  //returns BoardData of a given piece by row and col, used by Piece class only
   checkCell(pieces, row, col) {
     for (let piece of pieces) {
       if (piece.row == row && piece.col == col) {
@@ -44,6 +48,7 @@ class BoardData {
     }
   }
 
+  //checks the player of a given piece by row and col
   checkPlayer(pieces, row, col) {
     for (let piece of pieces) {
       if (piece.row == row && piece.col == col) {
@@ -82,10 +87,11 @@ function addImage(cell, player, name) {
   cell.appendChild(image);
 }
 
+//executes on each click on any given cell
 function onCellClick(event, row, col, table) {
   let cPieceRow = currentPiece[0];
-  let cPieceCol = currentPiece[1];
-  piecePlayer = dataBoard.getPiece(cPieceRow, cPieceCol).player
+  let cPieceCol = currentPiece[1]; //lines 91, 92 separate the col and row of the last selected piece
+  piecePlayer = dataBoard.getPiece(cPieceRow, cPieceCol).player;
   if ((currentPlayer == dataBoard.getPiece(row, col).player) || (currentPlayer == piecePlayer)) {
     if (event.currentTarget.classList.contains("movement")) {
       moveCurrentPiece(cPieceRow, cPieceCol, row, col);
@@ -93,21 +99,20 @@ function onCellClick(event, row, col, table) {
         currentPlayer = 'black';
       }else if(currentPlayer === 'black'){
         currentPlayer = 'white';
-      }
+      } //lines 97 to 101 alternate the turns between the players
     }
-  }else{
-    alert("this is "+currentPlayer+"'s turn!");
-  }
+  
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
       table.rows[i].cells[j].classList.remove('selected', 'movement');
     }
   }
   if(winner==undefined){
+    if (hasMoved == 0){
   let movingPiece = dataBoard.getPiece(row, col);
   console.log('this cell is occupied by', movingPiece);
   for (let piece of pieces) {
-    if (piece.row === row && piece.col === col && (piece.row !== currentPiece[0] && piece.col !== currentPiece[1])) {
+    if (piece.row === row && piece.col === col) {
       possibleMoves = piece.getPossibleMoves();
       for (let possibleMove of possibleMoves) {
         table.rows[possibleMove[0]].cells[possibleMove[1]].classList.add('movement');
@@ -115,15 +120,22 @@ function onCellClick(event, row, col, table) {
     }
   }
 }else{
+  hasMoved = 0;
+}
+}else{
   alert(winner+" wins!")
+}
+}else{
+  alert("this is "+currentPlayer+"'s turn!");
 }
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
-  currentPiece = [row, col];
+  currentPiece = [row, col]; //sets the row and col of the last selected piece
 }
 
+//creates the chessboard
 function createChessBoard() {
-  const table = document.createElement('table');
+  table = document.createElement('table');
   document.body.appendChild(table);
   for (let row = 0; row < BOARD_SIZE; row++) {
     const rowElement = table.insertRow();
@@ -144,9 +156,11 @@ function createChessBoard() {
   }
 }
 
+//moves the selected piece
 function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
   for (let piece of pieces) {
     if (piece.row === cPieceRow && piece.col === cPieceCol) {
+      //lines 164 to 172 execute the taking of a piece
       if (piece.player !== dataBoard.checkPlayer(pieces, row, col) && dataBoard.checkPlayer(pieces, row, col) !== undefined) {
         let eatenPiece = dataBoard.getPiece(row, col);
         if(eatenPiece.type === KING){
@@ -160,7 +174,8 @@ function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
       piece.col = col;
       pieceImage = document.getElementById('cell-' + cPieceRow + '_' + cPieceCol).firstElementChild;
       document.getElementById('cell-' + cPieceRow + '_' + cPieceCol).firstElementChild.remove();
-      document.getElementById('cell-' + row + '_' + col).appendChild(pieceImage)
+      document.getElementById('cell-' + row + '_' + col).appendChild(pieceImage);
+      hasMoved = 1;
     }
   }
 }
