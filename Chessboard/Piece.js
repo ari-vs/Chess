@@ -5,8 +5,11 @@ class Piece {
         this.type = type;
         this.player = player;
     }
+
+    //returns the possible moves of a selected piece
     getPossibleMoves() {
         let relativeMoves;
+        //checks the piece type to get its relative to itself moves
         if (this.type === PAWN) {
             relativeMoves = this.getPawnRelativeMoves();
         } else if (this.type === ROOK) {
@@ -22,6 +25,7 @@ class Piece {
         }
 
         let absoluteMoves = [];
+        //converts the relative moves to absolute moves on the board
         for (let relativeMove of relativeMoves) {
             const absoluteRow = this.row + relativeMove[0];
             const absoluteCol = this.col + relativeMove[1];
@@ -29,6 +33,7 @@ class Piece {
         }
 
         let filteredMoves = [];
+        //filters moves that are not on the board and that are blocked by allied pieces
         for (let absoluteMove of absoluteMoves) {
             const absoluteRow = absoluteMove[0];
             const absoluteCol = absoluteMove[1];
@@ -68,6 +73,7 @@ class Piece {
         }
         return result;
     }
+
     getRookRelativeMoves() {
         let result = [];
         for (let i = 1; i < 8; i++) {
