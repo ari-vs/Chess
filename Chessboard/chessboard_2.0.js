@@ -16,6 +16,7 @@ let possibleMove;
 let possibleMoves;
 let currentPiece = [];
 let currentPlayer = 'white';
+let winner;
 
 class Piece {
   constructor(row, col, type, player) {
@@ -273,6 +274,7 @@ function onCellClick(event, row, col, table) {
       table.rows[i].cells[j].classList.remove('selected', 'movement');
     }
   }
+  if(winner==undefined){
   let movingPiece = dataBoard.getPiece(row, col);
   console.log('this cell is occupied by', movingPiece);
   for (let piece of pieces) {
@@ -283,6 +285,9 @@ function onCellClick(event, row, col, table) {
       }
     }
   }
+}else{
+  alert(winner+" wins!")
+}
   selectedCell = event.currentTarget;
   selectedCell.classList.add('selected');
   currentPiece = [row, col];
@@ -315,6 +320,10 @@ function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
     if (piece.row === cPieceRow && piece.col === cPieceCol) {
       if (piece.player !== dataBoard.checkPlayer(pieces, row, col) && dataBoard.checkPlayer(pieces, row, col) !== undefined) {
         let eatenPiece = dataBoard.getPiece(row, col);
+        console.log(eatenPiece.type);
+        if(eatenPiece.type === KING){
+          winner = currentPlayer;
+        }
         console.log(eatenPiece);
         indexOfEaten = pieces.indexOf(eatenPiece);
         console.log(indexOfEaten);
