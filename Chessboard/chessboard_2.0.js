@@ -92,7 +92,7 @@ function onCellClick(event, row, col, table) {
   let cPieceRow = currentPiece[0];
   let cPieceCol = currentPiece[1]; //lines 91, 92 separate the col and row of the last selected piece
   piecePlayer = dataBoard.getPiece(cPieceRow, cPieceCol).player;
-  if ((currentPlayer == dataBoard.getPiece(row, col).player) || (currentPlayer == piecePlayer)) {
+  if ((currentPlayer == dataBoard.getPiece(row, col).player) || (currentPlayer == piecePlayer)) { //makes sure that the selected piece belongs to the current player
     if (event.currentTarget.classList.contains("movement")) {
       moveCurrentPiece(cPieceRow, cPieceCol, row, col);
       if (currentPlayer === 'white'){
@@ -107,7 +107,7 @@ function onCellClick(event, row, col, table) {
       table.rows[i].cells[j].classList.remove('selected', 'movement');
     }
   }
-  if(winner==undefined){
+  if(winner==undefined){ //makes sure that the game has not yet ended and the winner was not declared
     if (hasMoved == 0){
   let movingPiece = dataBoard.getPiece(row, col);
   console.log('this cell is occupied by', movingPiece);
@@ -170,6 +170,7 @@ function moveCurrentPiece(cPieceRow, cPieceCol, row, col) {
         pieces.splice(indexOfEaten, 1);
         document.getElementById('cell-' + row + '_' + col).firstElementChild.remove();
       }
+      //moves both the class and the image of the selected piece to the new cell
       piece.row = row;
       piece.col = col;
       pieceImage = document.getElementById('cell-' + cPieceRow + '_' + cPieceCol).firstElementChild;
